@@ -360,7 +360,7 @@ const App = () => {
 			<input
 			  type="text"
 			  value={record}
-			  placeholder='whats ur ninja power?'
+			  placeholder='Description?'
 			  onChange={e => setRecord(e.target.value)}
 			/>
 			  {/* If the editing variable is true, return the "Set record" and "Cancel" button */}
