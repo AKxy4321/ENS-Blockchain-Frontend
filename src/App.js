@@ -199,7 +199,7 @@ const App = () => {
 	  return;
 	}
 	// Calculate price based on the length of the domain
-	const price = domain.length === 3 ? '0.000000005' : domain.length === 4 ? '0.000000003' : '0.000000001';
+	const price = domain.length === 3 ? '0.5' : domain.length === 4 ? '0.3' : '0.1';
 	console.log("Minting domain", domain, "with price", price);
 	try {
 	  const { ethereum } = window;
@@ -259,7 +259,7 @@ const App = () => {
   		}
     
   		// Withdraw funds
-  		const tx = await contract.withdrawFunds();
+  		const tx = await contract.withdraw();
   		await tx.wait();
   		console.log("Funds withdrawn! Transaction hash: ", tx.hash);
     
@@ -283,34 +283,39 @@ const App = () => {
 
   // Add this render function next to your other render functions
   const renderMints = () => {
-  	if (currentAccount && mints.length > 0) {
-  	  return (
-  		<div className="mint-container">
-  		  <p className="subtitle"> Recently minted domains!</p>
-  		  <div className="mint-list">
-  			{ mints.map((mint, index) => {
-  			  return (
-  				<div className="mint-item" key={index}>
-  				  <div className='mint-row'>
-  					<a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
-  					  <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
-  					</a>
-  					{/* If mint.owner is currentAccount, add an "edit" button*/}
-  					{ mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
-  					  <button className="edit-button" onClick={() => editRecord(mint.name)}>
-  						<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
-  					  </button>
-  					  :
-  					  null
-  					}
-  				  </div>
-  			<p> {mint.record} </p>
-  		  </div>)
-  		  })}
-  		</div>
-  	  </div>);
-  	}
-    };
+	if (currentAccount && mints.length > 0) {
+	  const lastThreeMints = mints.slice(-4); // Get the last three items in the mints array
+  
+	  return (
+		<div className="mint-container">
+		  <p className="subtitle">Recently minted domains!</p>
+		  <div className="mint-list">
+			{lastThreeMints.map((mint, index) => (
+			  <div className="mint-item" key={index}>
+				<div className="mint-row">
+				  <a
+					className="link"
+					href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`}
+					target="_blank"
+					rel="noopener noreferrer"
+				  >
+					<p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+				  </a>
+				  {/* If mint.owner is currentAccount, add an "edit" button*/}
+				  {mint.owner.toLowerCase() === currentAccount.toLowerCase() ? (
+					<button className="edit-button" onClick={() => editRecord(mint.name)}>
+					  <img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
+					</button>
+				  ) : null}
+				</div>
+				<p> {mint.record} </p>
+			  </div>
+			))}
+		  </div>
+		</div>
+	  );
+	}
+  };
   
   // This will take us into edit mode and show us the edit buttons!
   const editRecord = (name) => {
