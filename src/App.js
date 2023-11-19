@@ -12,13 +12,15 @@ const CONTRACT_ADDRESS = '0x5b5ecF4000866cf8F09395A7ECFf639992E1367C';
 
 const App = () => {
 	const [currentAccount, setCurrentAccount] = useState('');
-	// Add some state data propertie
+	// Add some state data properties
 	const [domain, setDomain] = useState('');
     const [record, setRecord] = useState('');
 	const [network, setNetwork] = useState('');
 	const [editing, setEditing] = useState(false);
     const [loading, setLoading] = useState(false);
 	const [mints, setMints] = useState([]);
+	const [contractBalance, setContractBalance] = useState(0);
+	const [ownerAddress, setOwnerAddress] = useState('');
   
   const connectWallet = async () => {
     try {
@@ -28,7 +30,6 @@ const App = () => {
         alert("Get MetaMask -> https://metamask.io/");
         return;
       }
-			
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
       
       console.log("Connected", accounts[0]);
@@ -45,11 +46,14 @@ const App = () => {
 	  console.log('Make sure you have MetaMask installed!');
 	  return;
 	}
-  
+	ethereum.on('accountsChanged', handleAccountsChanged);
 	try {
 	  // Get accounts
 	  const accounts = await ethereum.request({ method: 'eth_accounts' });
-  
+
+	  const owner = '0x75b697Ea096148e4419585191EF9F2BBAC9BBae0';
+      setOwnerAddress(owner);
+	  
 	  if (accounts.length !== 0) {
 		const account = accounts[0];
 		setCurrentAccount(account);
@@ -66,6 +70,20 @@ const App = () => {
 	  function handleChainChanged(_chainId) {
 		// Reload the page or update the necessary state when the chain changes
 		window.location.reload();
+	  }
+	} catch (error) {
+		console.log(error);
+	  }
+	};
+
+  const fetchContractBalance = async () => {
+	try {
+	  const { ethereum } = window;
+	  if (ethereum) {
+		const provider = new ethers.providers.Web3Provider(ethereum);
+		// Fetch the contract balance
+		const balance = await provider.getBalance(CONTRACT_ADDRESS);
+		setContractBalance(ethers.utils.formatEther(balance));
 	  }
 	} catch (error) {
 	  console.log(error);
@@ -181,7 +199,7 @@ const App = () => {
 	  return;
 	}
 	// Calculate price based on the length of the domain
-	const price = domain.length === 3 ? '0.5' : domain.length === 4 ? '0.3' : '0.1';
+	const price = domain.length === 3 ? '0.000000005' : domain.length === 4 ? '0.000000003' : '0.000000001';
 	console.log("Minting domain", domain, "with price", price);
 	try {
 	  const { ethereum } = window;
@@ -224,36 +242,75 @@ const App = () => {
 	}
   }  
   
+  // Add a function to withdraw funds for the owner
+  const withdrawFunds = async () => {
+  	try {
+  	  const { ethereum } = window;
+  	  if (ethereum) {
+  		const provider = new ethers.providers.Web3Provider(ethereum);
+  		const signer = provider.getSigner();
+  		const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+    
+  		// Check if the current account is the owner
+  		const owner = await contract.owner();
+  		if (owner.toLowerCase() !== currentAccount.toLowerCase()) {
+  		  alert("Only the owner can withdraw funds");
+  		  return;
+  		}
+    
+  		// Withdraw funds
+  		const tx = await contract.withdrawFunds();
+  		await tx.wait();
+  		console.log("Funds withdrawn! Transaction hash: ", tx.hash);
+    
+  		// Update the contract balance after withdrawal
+  		fetchContractBalance();
+  	  }
+  	} catch (error) {
+	  console.log(error);
+  	}
+    };
+  
+	const handleAccountsChanged = (accounts) => {
+		// Handle the account change event
+		if (accounts.length > 0) {
+		  setCurrentAccount(accounts[0]);
+		} else {
+		  setCurrentAccount('');
+		}
+		window.location.reload();
+	  };
+
   // Add this render function next to your other render functions
-const renderMints = () => {
-	if (currentAccount && mints.length > 0) {
-	  return (
-		<div className="mint-container">
-		  <p className="subtitle"> Recently minted domains!</p>
-		  <div className="mint-list">
-			{ mints.map((mint, index) => {
-			  return (
-				<div className="mint-item" key={index}>
-				  <div className='mint-row'>
-					<a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
-					  <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
-					</a>
-					{/* If mint.owner is currentAccount, add an "edit" button*/}
-					{ mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
-					  <button className="edit-button" onClick={() => editRecord(mint.name)}>
-						<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
-					  </button>
-					  :
-					  null
-					}
-				  </div>
-			<p> {mint.record} </p>
-		  </div>)
-		  })}
-		</div>
-	  </div>);
-	}
-  };
+  const renderMints = () => {
+  	if (currentAccount && mints.length > 0) {
+  	  return (
+  		<div className="mint-container">
+  		  <p className="subtitle"> Recently minted domains!</p>
+  		  <div className="mint-list">
+  			{ mints.map((mint, index) => {
+  			  return (
+  				<div className="mint-item" key={index}>
+  				  <div className='mint-row'>
+  					<a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+  					  <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+  					</a>
+  					{/* If mint.owner is currentAccount, add an "edit" button*/}
+  					{ mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
+  					  <button className="edit-button" onClick={() => editRecord(mint.name)}>
+  						<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
+  					  </button>
+  					  :
+  					  null
+  					}
+  				  </div>
+  			<p> {mint.record} </p>
+  		  </div>)
+  		  })}
+  		</div>
+  	  </div>);
+  	}
+    };
   
   // This will take us into edit mode and show us the edit buttons!
   const editRecord = (name) => {
@@ -265,7 +322,6 @@ const renderMints = () => {
 	// Render methods
 	const renderNotConnectedContainer = () => (
 		<div className="connect-wallet-container">
-			<img src="https://media.giphy.com/media/3ohhwytHcusSCXXOUg/giphy.gif" alt="Ninja donut gif" />
       {/* Call the connectWallet function we just wrote when the button is clicked */}
 			<button onClick={connectWallet} className="cta-button connect-wallet-button">
 				Connect Wallet
@@ -320,19 +376,24 @@ const renderMints = () => {
 				  Mint
 				</button>  
 			  )}
+			{currentAccount && ownerAddress && ownerAddress.toLowerCase() === currentAccount.toLowerCase() && (
+            <button className='cta-button mint-button' disabled={loading} onClick={withdrawFunds}>
+              Withdraw Funds
+            </button>)}
+
 		  </div>
-		);
-	  }
+		);}
 
 	  {!currentAccount && renderNotConnectedContainer()}
 	  {currentAccount && renderInputForm()}
 
-	useEffect(() => {
+	  useEffect(() => {
 		checkIfWalletIsConnected();
+		fetchContractBalance();
 		if (network === 'Polygon Mumbai Testnet') {
-			  fetchMints();
-			}
-		  }, [currentAccount, network]);
+		  fetchMints();
+		}
+	  }, [currentAccount, network]);
 
 	return (
 		<div className="App">
@@ -344,11 +405,18 @@ const renderMints = () => {
 		  	      <p className="subtitle">Your Blockchain Buddy!</p>
 		  	    </div>
 		  	    {/* Display a logo and wallet connection status*/}
-		  	    <div className="right">
+		  	    <div className="log">
 				  <img alt="Network logo" className="logo" src={ network && network.includes("Polygon") ? polygonLogo : ethLogo} />
-		  	      { currentAccount ? <p> Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)} </p> : <p> Not connected </p> }
+				  {currentAccount ? (
+    				<p>
+      					Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)}
+      					<br />
+      					Contract Balance: {contractBalance} ETH
+    				</p> ) : ( <p>Not connected</p> )}
 		  	    </div>
 		  	  </header>
+				<div className="right">
+</div>
 		  	</div>
 				
 				{!currentAccount && renderNotConnectedContainer()}

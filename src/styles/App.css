@@ -53,6 +53,15 @@ header{
 
 .right{
   display: flex;
+  border-radius: 16px;
+  padding: 12px 20px;
+  height: 99%;
+  margin-right: 10%;
+  margin-top: 10px;
+}
+
+.log{
+  display: flex;
   background: black;
   border-radius: 16px;
   padding: 12px 20px;
@@ -229,7 +238,7 @@ input:focus {
   margin: 10px 15px;
   font-size: 18px;
   background-color: #c4b7fa;
-  color: black;
+  
   min-width: 150px;
   max-width: fit-content;
   box-shadow: 0px 0px 10px 3px rgba(255, 255, 255, 0.2);
