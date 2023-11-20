@@ -207,7 +207,20 @@ const App = () => {
 		const provider = new ethers.providers.Web3Provider(ethereum);
 		const signer = provider.getSigner();
 		const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+		
+		// Calculate the total cost including gas
+		const gasPrice = await provider.getGasPrice();
+		const gasCost = ethers.utils.formatEther(gasPrice.mul(21000)); // Assuming gas limit is 21000
   
+		const totalCost = ethers.utils.parseEther(price).add(gasCost);
+  
+		// Check if the total cost is greater than the current wallet balance
+		const walletBalance = await provider.getBalance(currentAccount);
+		if (walletBalance.lt(totalCost)) {
+		  alert("Insufficient funds to mint the domain. Please add funds to your wallet.");
+		  return;
+		}
+		
 		console.log("Going to pop wallet now to pay gas...")
 		let tx = await contract.register(domain, { value: ethers.utils.parseEther(price) });
 		// Wait for the transaction to be mined
