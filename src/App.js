@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './styles/App.css';
-import {ethers} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import contractAbi from './utils/contractABI.json';
 import polygonLogo from './assets/polygonlogo.png';
 import ethLogo from './assets/ethlogo.png';
@@ -211,12 +211,15 @@ const App = () => {
 		// Calculate the total cost including gas
 		const gasPrice = await provider.getGasPrice();
 		const gasCost = ethers.utils.formatEther(gasPrice.mul(21000)); // Assuming gas limit is 21000
-  
-		const totalCost = ethers.utils.parseEther(price).add(gasCost);
-  
+		const totalCost = parseFloat(gasCost) + parseFloat(price);
+
 		// Check if the total cost is greater than the current wallet balance
 		const walletBalance = await provider.getBalance(currentAccount);
-		if (walletBalance.lt(totalCost)) {
+		const wbalance = parseFloat(walletBalance)/10 ** 18;
+		console.log('Wallet Balance = ', wbalance);
+		console.log('Gas Cost + Fees = ', totalCost);
+		
+		if (wbalance < totalCost) {
 		  alert("Insufficient funds to mint the domain. Please add funds to your wallet.");
 		  return;
 		}
