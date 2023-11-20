@@ -109,6 +109,7 @@ const App = () => {
 		fetchMints();
 		setRecord('');
 		setDomain('');
+		setEditing(false);
 	  }
 	  } catch(error) {
 		console.log(error);
