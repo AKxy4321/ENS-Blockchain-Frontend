@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './styles/App.css';
-import {BigNumber, ethers} from "ethers";
+import { ethers } from "ethers";
 import contractAbi from './utils/contractABI.json';
 import polygonLogo from './assets/polygonlogo.png';
 import ethLogo from './assets/ethlogo.png';
@@ -290,22 +290,14 @@ const App = () => {
 	  console.log(error);
   	}
     };
-  
+
 	const handleAccountsChanged = (accounts) => {
 		// Handle the account change event
-		let accounts_loaded = [];
 		if (accounts.length > 0) {
-		  setCurrentAccount(accounts[0]);
-		  if(!accounts_loaded.includes(accounts[0])) {
-			accounts_loaded.push(accounts[0]);
-		  }
 		} else {
 		  setCurrentAccount('');
 		}
-		if(!accounts_loaded.includes(accounts[0]))
-		{
-			window.location.reload();
-		}
+		window.location.reload();
 	  };
 
   // Add this render function next to your other render functions
@@ -416,8 +408,8 @@ const App = () => {
 		  </div>
 		);}
 
-	  {!currentAccount && renderNotConnectedContainer()}
-	  {currentAccount && renderInputForm()}
+	{!currentAccount && renderNotConnectedContainer()}
+	{currentAccount && renderInputForm()}
 
 	  useEffect(() => {
 		checkIfWalletIsConnected();

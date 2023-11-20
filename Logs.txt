@@ -13,3 +13,9 @@ Restored event listener in wallets is connected function
 
 23.17
 Made a list that adds loaded accounts into a list, so that window.location.reload() doesnt occur for them
+
+23.40
+Simple is better, restored windows.location.reload() every time account changes
+
+23.44
+Updated !currentAccount && rendermints and other code to not be nested block
