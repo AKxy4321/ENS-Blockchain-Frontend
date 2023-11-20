@@ -304,7 +304,7 @@ const App = () => {
 		}
 		if(!accounts_loaded.includes(accounts[0]))
 		{
-			location.reload();
+			window.location.reload();
 		}
 	  };
 

@@ -12,4 +12,4 @@ Removed code that removes listener when component is unmounted?
 Restored event listener in wallets is connected function
 
 23.17
-Made a list that adds loaded accounts into a list, so that location.reload() doesnt occur for them
+Made a list that adds loaded accounts into a list, so that window.location.reload() doesnt occur for them
