@@ -104,7 +104,8 @@ const App = () => {
 		let tx = await contract.setRecord(domain, record);
 		await tx.wait();
 		console.log("Record set https://mumbai.polygonscan.com/tx/"+tx.hash);
-  
+		
+		alert('Domain updated successfully!');
 		fetchMints();
 		setRecord('');
 		setDomain('');
@@ -250,7 +251,7 @@ const App = () => {
 		  fetchContractBalance();
 		  
 		  // Display a popup
-		  window.alert('Domain minted successfully!');
+		 alert('Domain minted successfully!');
 		} else {
 		  alert("Transaction failed! Please try again");
 		}
