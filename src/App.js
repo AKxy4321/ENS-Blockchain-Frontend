@@ -8,7 +8,7 @@ import { networks } from './utils/networks';
 
 // Add the domain you will be minting
 const tld = '.block';
-const CONTRACT_ADDRESS = '0x70996c2012158844b3395265e478cb0991A8b18e';
+const CONTRACT_ADDRESS = '0x27ed568f39035D81E5EA94996402c514ED025fFf';
 
 const App = () => {
 	const [currentAccount, setCurrentAccount] = useState('');
