@@ -32,8 +32,9 @@ const App = () => {
       }
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
       
-      console.log("Connected", accounts[0]);
-      setCurrentAccount(accounts[0]);
+	  const account = accounts[0];
+      console.log("Connected", account);
+      setCurrentAccount(account);
     } catch (error) {
       console.log(error)
     }
@@ -49,7 +50,6 @@ const App = () => {
 	try {
 	  // Get accounts
 	  const accounts = await ethereum.request({ method: 'eth_accounts' });
-	  ethereum.on('accountsChanged', handleAccountsChanged);
 	  const owner = '0x75b697Ea096148e4419585191EF9F2BBAC9BBae0';
       setOwnerAddress(owner);
 	  
@@ -59,6 +59,7 @@ const App = () => {
 	  } else {
 		setCurrentAccount('');
 	  }
+	  ethereum.on('accountsChanged', handleAccountsChanged);
   
 	  // Get chainId
 	  const chainId = await ethereum.request({ method: 'eth_chainId' });
@@ -293,11 +294,13 @@ const App = () => {
 
 	const handleAccountsChanged = (accounts) => {
 		// Handle the account change event
+		const account = accounts[0];
 		if (accounts.length > 0) {
-			setCurrentAccount(accounts[0]);
+			setCurrentAccount(account);
 		} else {
 		  setCurrentAccount('');
 		}
+
 		window.location.reload();
 	  };
 
@@ -418,6 +421,9 @@ const App = () => {
 		if (network === 'Polygon Mumbai Testnet') {
 		  fetchMints();
 		}
+		
+		const { ethereum } = window;
+		ethereum.on('accountsChanged', handleAccountsChanged);
 	}, [currentAccount, network]);
 
 	return (
