@@ -49,7 +49,7 @@ const App = () => {
 	try {
 	  // Get accounts
 	  const accounts = await ethereum.request({ method: 'eth_accounts' });
-
+	  ethereum.on('accountsChanged', handleAccountsChanged);
 	  const owner = '0x75b697Ea096148e4419585191EF9F2BBAC9BBae0';
       setOwnerAddress(owner);
 	  

@@ -7,3 +7,6 @@ Added event listener for change of accounts and code accordingly
 
 23.01
 Removed code that removes listener when component is unmounted?
+
+23.06 
+Restored event listener in wallets is connected function
