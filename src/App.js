@@ -230,7 +230,9 @@ const App = () => {
   
 		  setRecord('');
 		  setDomain('');
-  
+		  
+		  fetchContractBalance();
+		  
 		  // Display a popup
 		  window.alert('Domain minted successfully!');
 		} else {
