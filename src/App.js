@@ -299,7 +299,7 @@ const App = () => {
 		} else {
 		  setCurrentAccount('');
 		}
-		window.location.reload();
+		//window.location.reload();
 	  };
 
   // Add this render function next to your other render functions
