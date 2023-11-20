@@ -298,7 +298,6 @@ const App = () => {
 		} else {
 		  setCurrentAccount('');
 		}
-		//window.location.reload();
 	  };
 
   // Add this render function next to your other render functions
@@ -422,10 +421,6 @@ const App = () => {
   		if (ethereum) {
     	ethereum.on('accountsChanged', handleAccountsChanged);
 	    }
-		return () => {
-			// Cleanup the event listener when the component unmounts
-			ethereum.removeListener('accountsChanged', handleAccountsChanged);
-		  };
 	}, [currentAccount, network]);
 
 	return (

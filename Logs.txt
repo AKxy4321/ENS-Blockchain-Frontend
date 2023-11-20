@@ -4,3 +4,6 @@ Window doesnt reload upon change of accounts
 
 22.55
 Added event listener for change of accounts and code accordingly
+
+23.01
+Removed code that removes listener when component is unmounted?
