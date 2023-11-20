@@ -1,2 +1,6 @@
-20-11-23 22.42
+20-11-23 
+22.42
 Window doesnt reload upon change of accounts
+
+22.55
+Added event listener for change of accounts and code accordingly

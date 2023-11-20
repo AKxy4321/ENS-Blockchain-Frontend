@@ -46,7 +46,6 @@ const App = () => {
 	  console.log('Make sure you have MetaMask installed!');
 	  return;
 	}
-	ethereum.on('accountsChanged', handleAccountsChanged);
 	try {
 	  // Get accounts
 	  const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -419,7 +418,15 @@ const App = () => {
 		if (network === 'Polygon Mumbai Testnet') {
 		  fetchMints();
 		}
-	  }, [currentAccount, network]);
+		const { ethereum } = window;
+  		if (ethereum) {
+    	ethereum.on('accountsChanged', handleAccountsChanged);
+	    }
+		return () => {
+			// Cleanup the event listener when the component unmounts
+			ethereum.removeListener('accountsChanged', handleAccountsChanged);
+		  };
+	}, [currentAccount, network]);
 
 	return (
 		<div className="App">
