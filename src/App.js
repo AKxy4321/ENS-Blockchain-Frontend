@@ -294,6 +294,7 @@ const App = () => {
 	const handleAccountsChanged = (accounts) => {
 		// Handle the account change event
 		if (accounts.length > 0) {
+			setCurrentAccount(accounts[0]);
 		} else {
 		  setCurrentAccount('');
 		}
