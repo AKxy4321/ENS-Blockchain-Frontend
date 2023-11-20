@@ -293,10 +293,18 @@ const App = () => {
   
 	const handleAccountsChanged = (accounts) => {
 		// Handle the account change event
+		let accounts_loaded = [];
 		if (accounts.length > 0) {
 		  setCurrentAccount(accounts[0]);
+		  if(!accounts_loaded.includes(accounts[0])) {
+			accounts_loaded.push(accounts[0]);
+		  }
 		} else {
 		  setCurrentAccount('');
+		}
+		if(!accounts_loaded.includes(accounts[0]))
+		{
+			location.reload();
 		}
 	  };
 
@@ -417,10 +425,6 @@ const App = () => {
 		if (network === 'Polygon Mumbai Testnet') {
 		  fetchMints();
 		}
-		const { ethereum } = window;
-  		if (ethereum) {
-    	ethereum.on('accountsChanged', handleAccountsChanged);
-	    }
 	}, [currentAccount, network]);
 
 	return (
