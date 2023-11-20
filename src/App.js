@@ -282,7 +282,8 @@ const App = () => {
   		const tx = await contract.withdraw();
   		await tx.wait();
   		console.log("Funds withdrawn! Transaction hash: ", tx.hash);
-    
+		
+		alert("Funds withdrawn!");
   		// Update the contract balance after withdrawal
   		fetchContractBalance();
   	  }
