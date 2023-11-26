@@ -196,8 +196,8 @@ const App = () => {
 	  return;
 	}
 	// Alert the user if the domain is too short
-	if (domain.length < 3) {
-	  alert('Domain must be at least 3 characters long');
+	if (domain.length < 3 || domain.length > 10) {
+	  alert('Domain must be at least 3 characters long and shorter than 10 characters');
 	  return;
 	}
 	// Calculate price based on the length of the domain
